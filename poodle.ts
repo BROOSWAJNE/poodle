@@ -33,6 +33,7 @@ export function serve(routes: RouteHandlers, server: Server): void {
 		const handler = getHandlerForReq(routes, req);
 		const context = {
 			request: req,
+			// TODO: add logger support
 			logger: undefined,
 		};
 		Promise.resolve( ).then(( ) => handler(context)).catch(function handleHandlerError(err) {
