@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist",
+		"sourceMap": true,
+
+		"moduleResolution": "Node",
+		"module": "ESNext",
+		"target": "ESNext",
+		"lib": [ "ESNext" ],
+
+		"strict": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"strictNullChecks": true,
+		"allowSyntheticDefaultImports": true
+	},
+
+	"include": [ "**/*.ts" ],
+	"exclude": [ "node_modules", "dist" ]
+}
