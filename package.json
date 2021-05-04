@@ -2,13 +2,17 @@
   "name": "@brooswajne/poodle",
   "version": "0.0.1",
   "description": "A nice little service dog",
-  "main": "index.js",
+  "main": "dist/poodle.js",
   "scripts": {
+
     "test": "echo \"Error: no test specified\" && exit 1",
+
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+
     "build": "tsc",
     "build:watch": "tsc --watch"
+
   },
   "repository": {
     "type": "git",
