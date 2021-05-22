@@ -8,7 +8,10 @@ export interface ServerRequest {
 	url: string;
 	method: string;
 }
-export interface RequestContext {
+
+export interface RequestContextDefault {
 	request: ServerRequest;
-	logger: void;
 }
+
+export type RequestContextGetter<TRequestContext = RequestContextDefault>
+	= (request: ServerRequest) => TRequestContext;

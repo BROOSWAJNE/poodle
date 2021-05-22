@@ -1,19 +1,13 @@
 {
   "name": "@brooswajne/poodle",
+  "type": "module",
   "version": "0.0.1",
+
+  "main": "./dist/poodle.js",
+  "exports": "./dist/poodle.js",
+	"types": "./dist/poodle.d.ts",
+
   "description": "A nice little service dog",
-  "main": "dist/poodle.js",
-  "scripts": {
-
-    "test": "echo \"Error: no test specified\" && exit 1",
-
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-
-    "build": "tsc",
-    "build:watch": "tsc --watch"
-
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BROOSWAJNE/poodle.git"
@@ -24,6 +18,14 @@
     "url": "https://github.com/BROOSWAJNE/poodle/issues"
   },
   "homepage": "https://github.com/BROOSWAJNE/poodle#readme",
+
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "tsc",
+    "build:watch": "tsc --watch"
+  },
+
   "devDependencies": {
     "@brooswajne/eslint-config": "^0.0.2",
     "@types/node": "^15.0.1",

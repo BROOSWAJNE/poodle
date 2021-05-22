@@ -17,14 +17,24 @@ import { traverse } from './files.js';
 /** Different ways a file can be routed by poodle. */
 export enum RouteType {
 	/** Signifies that the file's contents should be served statically to the client. */
-	STATIC,
+	Static,
 	/**
 	 * Signifies that the file should be loaded as a JavaScript module, and any exported http method
 	 * handlers it provides should be used for dynamic routing.
 	 */
-	DYNAMIC,
+	Dynamic,
 	/** Signifies that the file should be ignored when routing. */
-	IGNORED,
+	Ignored,
+}
+
+interface RouteContext {
+	directory: string;
+	filepath: string;
+	routes: RouteHandlers;
+	onRouteAdded?: (route: {
+		method: string;
+		path: string;
+	}) => void;
 }
 
 const IMPORTABLE_EXTENSIONS = [
@@ -35,12 +45,18 @@ const IMPORTABLE_EXTENSIONS = [
 
 function getDefaultRouteType(file: string): RouteType {
 	const isHidden = basename(file).startsWith('.');
-	if (isHidden) return RouteType.IGNORED;
+	if (isHidden) return RouteType.Ignored;
 
 	const isImportable = IMPORTABLE_EXTENSIONS.includes(extname(file));
-	return isImportable ? RouteType.DYNAMIC : RouteType.STATIC;
+	return isImportable ? RouteType.Dynamic : RouteType.Static;
 }
-async function addStaticRoute(routes: RouteHandlers, directory: string, filepath: string) {
+
+async function addStaticRoute({
+	directory,
+	filepath,
+	routes,
+	onRouteAdded,
+}: RouteContext) {
 	const path = relative(directory, filepath);
 
 	const route = `/${path}`;
@@ -49,8 +65,15 @@ async function addStaticRoute(routes: RouteHandlers, directory: string, filepath
 	// assertion as guaranteed by previous if statement
 	const methods = routes.get(route) as MethodHandlers;
 	methods.set('GET', async ( ) => file(filepath));
+
+	if (onRouteAdded) onRouteAdded({ method: 'GET', path: route });
 }
-async function addDynamicRoute(routes: RouteHandlers, directory: string, filepath: string) {
+async function addDynamicRoute({
+	directory,
+	filepath,
+	routes,
+	onRouteAdded,
+}: RouteContext) {
 	// remove extension from route url
 	const name = basename(filepath, extname(filepath));
 	const path = relative(directory, dirname(filepath));
@@ -71,6 +94,8 @@ async function addDynamicRoute(routes: RouteHandlers, directory: string, filepat
 		if (!isValid) continue;
 
 		methods.set(method, handler);
+
+		if (onRouteAdded) onRouteAdded({ method: method, path: route });
 	}
 }
 
@@ -78,17 +103,30 @@ async function addDynamicRoute(routes: RouteHandlers, directory: string, filepat
 export async function initializeRoutes(directory: string, {
 	routes = new Map( ),
 	getRouteType = getDefaultRouteType,
+	onRouteAdded = ( ) => null,
 }: {
 	/** Route handlers to be appended to. */
 	routes?: RouteHandlers;
 	/** A callback which identifies the type of routing which a file defines. */
 	getRouteType?: (file: string) => RouteType;
+	onRouteAdded?: RouteContext['onRouteAdded'];
 } = { }): Promise<RouteHandlers> {
 	await traverse(directory, async function initializeRoute(filepath) {
 		const type = getRouteType(filepath);
 		switch (type) {
-		case RouteType.STATIC: return addStaticRoute(routes, directory, filepath);
-		case RouteType.DYNAMIC: return addDynamicRoute(routes, directory, filepath);
+		case RouteType.Static: return addStaticRoute({
+			routes,
+			directory,
+			filepath,
+			onRouteAdded,
+		});
+		case RouteType.Dynamic: return addDynamicRoute({
+			routes,
+			directory,
+			filepath,
+			onRouteAdded,
+		});
+		case RouteType.Ignored: return Promise.resolve( );
 		default: throw new TypeError(`Invalid route type: "${type}"`);
 		}
 	});
