@@ -8,16 +8,16 @@
 	"types": "./dist/poodle.d.ts",
 
   "description": "A nice little service dog",
+  "author": "Willem Garnier",
+  "license": "ISC",
+  "homepage": "https://github.com/BROOSWAJNE/poodle#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BROOSWAJNE/poodle.git"
   },
-  "author": "Willem Garnier",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/BROOSWAJNE/poodle/issues"
   },
-  "homepage": "https://github.com/BROOSWAJNE/poodle#readme",
 
   "scripts": {
     "lint": "eslint .",
